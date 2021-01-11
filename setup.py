@@ -65,7 +65,7 @@ def makefiles():
     
 def move():
     system("mv pkg/pyOracle.py /etc/zabbix/bin/pyOracle.py")
-    system('mv pkg/Oracle_scripts.py /etc/zabbix/bin/Oracle_Scripts.py')
+    system('mv pkg/Oracle_Scripts.py /etc/zabbix/bin/Oracle_Scripts.py')
 
 if __name__ == "__main__":
     install_zabbix()
