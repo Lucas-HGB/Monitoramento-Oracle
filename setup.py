@@ -1,17 +1,17 @@
 #!/usr/bin/python2
 # -*- coding: UTF-8 -*-
 from os import system
-from subprocess import Popen
+from subprocess import Popen, PIPE
 
 def get_os_ver():
     cmd = ["cat", "/etc/redhat-release"]
-	output = Popen(cmd, stdout=subprocess.PIPE ).communicate()[0]
-	for word in output.split():
-		try:
-			ver = float(word)
-		except ValueError:
-			pass
-	return ver
+    output = Popen(cmd, stdout=PIPE).communicate()[0]
+    for word in output.split():
+	try:
+		ver = float(word)
+	except ValueError:
+		pass
+    return ver
 
 def pyOracle_setup():
     system("wget https://github.com/Lucas-HGB/Monitoramento-Oracle/archive/Python2.zip")
