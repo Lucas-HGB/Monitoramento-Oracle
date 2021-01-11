@@ -85,8 +85,8 @@ class Ambiente():
 					config_line = [line for line in lines if line[0] != "#" and line != "\n"]
 					configs[config_line.split(":")[0]] = (config_line.split(":")[1])
 				return configs
-			except FileNotFoundError:
-				print "File /etc/oratab not found!"
+			except Exception as excp:
+				print excp
 		elif arch().lower() == "windows":
 			reg_path = r'SOFTWARE\Oracle\KEY_HOME_NAME'
 			reg_key = reg.OpenKey(reg.HKEY_LOCAL_MACHINE, reg_path, 0, reg.KEY_READ)
