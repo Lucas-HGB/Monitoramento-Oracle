@@ -14,8 +14,6 @@ def get_os_ver():
     return ver
 
 def pyOracle_setup():
-    system("wget https://github.com/Lucas-HGB/Monitoramento-Oracle/archive/Python2.zip")
-    system("unzip Python2.zip")
     system("sudo yum install -y python2-pip")
     system("python2 -m pip install cx_Oracle==7.3")
 
