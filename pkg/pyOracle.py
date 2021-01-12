@@ -34,11 +34,12 @@ def print_json(values):
 	print "{"
 	print '    "data": ['
 	for varia in values:
-		print '        {'
-		if varia != values[-1]:
-			print '            "{#SID}": "%s"},' % varia
-		else:
-			print '            "{#SID}": "%s"}' % varia
+		if varia != "+ASM":
+			print '        {'
+			if varia != values[-1]:
+				print '            "{#SID}": "%s"},' % varia
+			else:
+				print '            "{#SID}": "%s"}' % varia
 	print '    ]'
 	print "}"
 
