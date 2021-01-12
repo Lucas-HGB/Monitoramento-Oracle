@@ -82,8 +82,9 @@ class Ambiente():
 			try:
 				with open(r"/etc/oratab", "r") as oratab:
 					lines = oratab.readlines()
-					config_line = [line for line in lines if line[0] != "#" and line != "\n"]
-					configs[config_line.split(":")[0]] = (config_line.split(":")[1])
+					config_lines = [line for line in lines if line[0] != "#" and line != "\n"]
+					for config in config_lines:
+						configs[config.split(":")[0]] = (config.split(":")[1])
 				return configs
 			except Exception as excp:
 				print excp
