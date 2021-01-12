@@ -16,8 +16,7 @@ def get_os_ver():
 def pyOracle_setup():
     system("sudo yum install oracle-epel-release-el7.x86_64")
     system("sudo yum install python-pip")
-    system("python -m pip install --upgrade-pip")
-    system("python -m pip install cx_Oracle==7.3")
+    system("python -m pip install --upgrade-pip cx_Oracle==7.3")
 
 def install_zabbix():
     ver = get_os_ver()
