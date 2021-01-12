@@ -3,6 +3,9 @@
 from os import system
 from subprocess import Popen, PIPE
 
+global success
+successs = True
+
 def get_os_ver():
     cmd = ["cat", "/etc/redhat-release"]
     output = Popen(cmd, stdout=PIPE).communicate()[0]
@@ -13,21 +16,39 @@ def get_os_ver():
 		pass
     return ver
 
+def run(command, word):
+	cmd = []
+	for word in command:
+		cmd.append(" " + word)
+	cmd.append(" |")
+	cmd.append(" grep")
+	cmd.append(" " + word)
+	output = Popen(cmd, stdout=PIPE).communicate()[0]
+	if output != "":
+		return True
+	elif output == "":
+		return False
+
 def pyOracle_setup():
-    system("sudo yum install oracle-epel-release-el7.x86_64")
-    system("sudo yum install python-pip")
-    system("python -m pip install --upgrade-pip cx_Oracle==7.3")
+    success = run("sudo yum install oracle-epel-release-e17.x86_64", "Complete!")
+    if not success:
+	print "error when running 'sudo yum install oracle-epel-release-e17.x86_64 | grep Complete!"
+    success = run("sudo yum install python-pip", "Complete!")
+    if not success:
+	print "error when running 'sudo yum install python-pip | grep Complete!'"
+    success = True
+    success = run("python -m pip install --upgrade-pip cx_Oracle==7.3", "Successfully installed")
+    if not success:
+	print "python -m pip install --upgrade-pip cx_Oracle==7.3 | grep Successfully installed'"
 
 def install_zabbix():
     ver = get_os_ver()
-    if ver >= 7:
-        system("rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/7/x86_64/zabbix-release-4.4-1.el7.noarch.rpm")
-    elif ver >= 6:
-        system("rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/6/x86_64/zabbix-release-4.4-1.el6.noarch.rpm")
-    elif ver >= 5:
-        system("rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/5/x86_64/zabbix-release-4.4-1.el5.noarch.rpm")
-    system("sudo yum install -y zabbix-agent-4.4.6 zabbix-get-4.4.6 zabbix-sender-4.4.6")
-    system("rm -rf /etc/zabbix")
+    success = run("rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/%s/x86_64/zabbix-release-4.4-1.el%s.noarch.rpm" % (ver[0], ver[0]), "added key")
+    if success:
+    	system("sudo yum install -y zabbix-agent-4.4.6 zabbix-get-4.4.6 zabbix-sender-4.4.6")
+    	system("rm -rf /etc/zabbix")
+    elif not success:
+	print "error when installing zabbix"
 
 
 def makefiles():
@@ -63,7 +84,7 @@ def makefiles():
     makeinstall()
     
 def move():
-    system("mv pkg/pyOracle.py /etc/zabbix/bin/pyOracle.py")
+    succes = run("mv pkg/pyOracle.py /etc/zabbix/bin/pyOracle.py", "")
     system('mv pkg/Oracle_Scripts.py /etc/zabbix/bin/Oracle_Scripts.py')
 
 if __name__ == "__main__":
