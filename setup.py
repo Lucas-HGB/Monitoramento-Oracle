@@ -1,6 +1,7 @@
 #!/usr/bin/python2
 # -*- coding: UTF-8 -*-
 from os import system
+from subprocess import Popen, PIPE
 
 global success, install
 installs = {"epel_install": True, "pip_install": True, "cxOracle_install": True, "rpm_add": True, "zabbix_install": True, "zabbix_config": True}
@@ -12,18 +13,18 @@ def get_os_ver():
     for word in output.split():
         try:
             ver = float(word)
-        except ValueError!!!:
+        except ValueError:
             pass
     return ver
 
 def pyOracle_setup():
-    success = system("sudo yum install -y oracle-epel-release-e17.x86_64", "Complete!")
+    success = system("sudo yum install -y oracle-epel-release-e17.x86_64")
     if success != 0:
         installs["epel_install"] = False
-	    print "ERROR!!! when running 'sudo yum install -y oracle-epel-release-e17.x86_64"
-    success = run("sudo yum install -y python-pip", "Complete!")
+	print "ERROR!!! when running 'sudo yum install -y oracle-epel-release-e17.x86_64"
+    success = system("sudo yum install -y python-pip")
     if success != 0:
-	    print "ERROR!!! when running 'sudo yum install -y python-pip'"
+	print "ERROR!!! when running 'sudo yum install -y python-pip'"
         install["pip_install"] = False
     success = True
     success = system("python -m pip install --upgrade pip cx_Oracle==7.3")
@@ -32,7 +33,7 @@ def pyOracle_setup():
 
 def install_zabbix():
     ver = get_os_ver()
-    success = run("rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/%s/x86_64/zabbix-release-4.4-1.el%s.noarch.rpm" % (str(ver)[0], str(ver)[0]), "added key")
+    success = system("rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/%s/x86_64/zabbix-release-4.4-1.el%s.noarch.rpm" % (str(ver)[0], str(ver)[0]))
     if success != 0:
         installs["rpm_add"] = False
         print "ERROR!!! when installing zabbix RPM"
@@ -40,7 +41,7 @@ def install_zabbix():
     system("rm -rf /etc/zabbix")
     if success != 0:
         print "ERROR!!! when installing zabbix pkg"
-	    installs["zabbix_install"] = False
+	installs["zabbix_install"] = False
 
 
 def makefiles():
