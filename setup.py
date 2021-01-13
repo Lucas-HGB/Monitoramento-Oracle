@@ -34,13 +34,13 @@ def pyOracle_setup():
     success = run("sudo yum install -y oracle-epel-release-e17.x86_64", "Complete!")
     if not success:
         installs["epel_install"] = False
-	    print "error when running 'sudo yum install -y oracle-epel-release-e17.x86_64 | grep Complete!"
+	print "error when running 'sudo yum install -y oracle-epel-release-e17.x86_64 | grep Complete!"
     success = run("sudo yum install -y python-pip", "Complete!")
     if not success:
-	    print "error when running 'sudo yum install -y python-pip | grep Complete!'"
+	print "error when running 'sudo yum install -y python-pip | grep Complete!'"
         install["pip_install"] = False
     success = True
-    system("python -m pip install --upgrade-pip cx_Oracle==7.3")
+    system("python -m pip install --upgrade pip cx_Oracle==7.3")
 
 def install_zabbix():
     ver = get_os_ver()
@@ -51,6 +51,7 @@ def install_zabbix():
     elif not success:
         print "error when installing zabbix RPM"
         installs["rpm_add"] = False
+	installs["zabbix_install"] = False
 
 
 
