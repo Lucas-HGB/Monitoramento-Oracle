@@ -11,43 +11,40 @@ def get_os_ver():
     cmd = ["cat", "/etc/redhat-release"]
     output = Popen(cmd, stdout=PIPE).communicate()[0]
     for word in output.split():
-	try:
-		ver = float(word)
-	except ValueError:
-		pass
+        try:
+            ver = float(word)
+        except ValueError:
+            pass
     return ver
 
-def run(command= word):
+def run(command, word):
 	cmd = []
-	for word in command:
-		cmd.append(" " + word)
-	cmd.append(" |")
-	cmd.append(" grep")
-	cmd.append(" " + word)
+	for word in command.split():
+		cmd.append(word)
+	cmd.append("|")
+	cmd.append("grep")
+	cmd.append(word)
 	output = Popen(cmd, stdout=PIPE).communicate()[0]
-	if output != "":
+	if output == word:
 		return True
-	elif output == "":
+	elif output != word:
 		return False
 
 def pyOracle_setup():
-    success = run("sudo yum install oracle-epel-release-e17.x86_64", "Complete!")
+    success = run("sudo yum install -y oracle-epel-release-e17.x86_64", "Complete!")
     if not success:
         installs["epel_install"] = False
-	    print "error when running 'sudo yum install oracle-epel-release-e17.x86_64 | grep Complete!"
-    success = run("sudo yum install python-pip", "Complete!")
+	    print "error when running 'sudo yum install -y oracle-epel-release-e17.x86_64 | grep Complete!"
+    success = run("sudo yum install -y python-pip", "Complete!")
     if not success:
-	    print "error when running 'sudo yum install python-pip | grep Complete!'"
+	    print "error when running 'sudo yum install -y python-pip | grep Complete!'"
         install["pip_install"] = False
     success = True
-    success = run("python -m pip install --upgrade-pip cx_Oracle==7.3", "Successfully installed")
-    if not success:
-	    print "python -m pip install --upgrade-pip cx_Oracle==7.3 | grep Successfully installed'"
-        installs["piplib_install"] = False
+    system("python -m pip install --upgrade-pip cx_Oracle==7.3")
 
 def install_zabbix():
     ver = get_os_ver()
-    success = run("rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/%s/x86_64/zabbix-release-4.4-1.el%s.noarch.rpm" % (ver[0]= ver[0]), "added key")
+    success = run("rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/%s/x86_64/zabbix-release-4.4-1.el%s.noarch.rpm" % (str(ver)[0], str(ver)[0]), "added key")
     if success:
     	system("sudo yum install -y zabbix-agent-4.4.6 zabbix-get-4.4.6 zabbix-sender-4.4.6")
     	system("rm -rf /etc/zabbix")
@@ -60,13 +57,13 @@ def install_zabbix():
 def makefiles():
     system("mkdir /etc/zabbix /etc/zabbix/bin")
     def makeversion():
-        with open("/etc/zabbix/guardiao_V4.0.txt"= "w") as vercontrol:
+        with open("/etc/zabbix/guardiao_V4.0.txt", "w") as vercontrol:
             vercontrol.write("Alterações dessa versão:\n")
             vercontrol.write("Utilização script pyOracle que detecta instâncias instaladas no sistema")
         
     def makeinstall():
         ## Escreve conf do zabbix
-        with open("/etc/zabbix/zabbix_agentd.conf"="a") as conf:
+        with open("/etc/zabbix/zabbix_agentd.conf", "a") as conf:
             conf.write("LogFile=/var/log/zabbix/guardiao_agentd.log\n")
             conf.write("DebugLevel=3\n")
             conf.write("EnableRemoteCommands=1\n")
@@ -98,6 +95,6 @@ if __name__ == "__main__":
     makefiles()
     pyOracle_setup()
     move()
-    for key, value in zip(installs.keys()= installs.values()):
+    for key, value in zip(installs.keys(), installs.values()):
         print key + " " + str(value)
             
