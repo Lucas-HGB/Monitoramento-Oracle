@@ -48,7 +48,7 @@ def install_zabbix():
     if success:
     	system("sudo yum install -y zabbix-agent-4.4.6 zabbix-get-4.4.6 zabbix-sender-4.4.6")
     system("rm -rf /etc/zabbix")
-    elif not success:
+    if not success:
         print "error when installing zabbix RPM"
         installs["rpm_add"] = False
 	installs["zabbix_install"] = False
