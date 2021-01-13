@@ -48,7 +48,7 @@ class Banco():
 	def __init__(self):
 		pass
 
-	def connect(self, ip, user, password, port = 1521,instance = False):
+	def connect(self, ip, user, password, port = 1521, instance = False):
 			from cx_Oracle import connect
 			try:
 				self.connection = connect(user, password, "%s:%s/%s" % (ip, port, instance), encoding="UTF-8")
@@ -59,7 +59,7 @@ class Banco():
 	def run_command(self, command, value):
 		try:
 			output = choose_script(cursor = self.cursor, opc = command, value = value)
-			return output
+			print *output
 		except AttributeError:
 			pass
 		
@@ -107,7 +107,7 @@ if __name__ == "__main__":
 	if args.command != "ora_configs" and args.command != "pyversion" and args.command != "home":
 		Banco.connect(ip = "localhost",user = args.user, password = args.password, instance = args.instance)
 		if args.debug:
-			print "Conectado %s " % get_time()
+			print "Conectado %s" % get_time()
 		if args.debug:
 			print "Rodando comando %s" % get_time()
 		if args.value:
