@@ -47,7 +47,7 @@ def install_zabbix():
     success = run("rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/%s/x86_64/zabbix-release-4.4-1.el%s.noarch.rpm" % (str(ver)[0], str(ver)[0]), "added key")
     if success:
     	system("sudo yum install -y zabbix-agent-4.4.6 zabbix-get-4.4.6 zabbix-sender-4.4.6")
-    	system("rm -rf /etc/zabbix")
+    system("rm -rf /etc/zabbix")
     elif not success:
         print "error when installing zabbix RPM"
         installs["rpm_add"] = False
