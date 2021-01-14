@@ -18,11 +18,11 @@ def get_os_ver():
     return ver
 
 def pyOracle_setup():
-    success = system("sudo yum install -y oracle-epel-release-e17.x86_64", "Complete!")
+    success = system("sudo yum install -y oracle-epel-release-e17.x86_64")
     if success != 0:
         installs["epel_install"] = False
 	print "ERROR!!! when running 'sudo yum install -y oracle-epel-release-e17.x86_64"
-    success = run("sudo yum install -y python-pip", "Complete!")
+    success = system("sudo yum install -y python-pip")
     if success != 0:
 	print "ERROR!!! when running 'sudo yum install -y python-pip'"
         install["pip_install"] = False
