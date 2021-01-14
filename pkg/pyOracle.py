@@ -45,23 +45,21 @@ def print_json(values):
 
 class Banco():
 
-	def __init__(self):
-		pass
-
-	def connect(self, ip, user, password, port = 1521, instance = False):
-			from cx_Oracle import connect
-			try:
-				self.connection = connect(user, password, "%s:%s/%s" % (ip, port, instance), encoding="UTF-8")
-				self.cursor = self.connection.cursor()
-			except Exception as excp:
-				return excp
+	def __init__(self, ip, user, password, instance, port = 1521):
+		from cx_Oracle import connect
+		self.errors = []
+		try:
+			self.connection = connect(user, password, "%s:%s/%s" % (ip, port, instance), encoding="UTF-8")
+			self.cursor = self.connection.cursor()
+		except Exception as excp:
+			self.errors.append(excp)
 
 	def run_command(self, command, value):
 		try:
 			output = choose_script(cursor = self.cursor, opc = command, value = value)[0]
 			print output
-		except AttributeError:
-			pass
+		except Exception as excp:
+			self.erros.append(excp)
 		
 
 class Ambiente():
@@ -79,6 +77,8 @@ class Ambiente():
 	def set_environ(self, instance):
 		configs = get_oracle_configs()
 		environ["LD_LIBRARY_PATH"] = "%s/lib" % (configs[instance])
+		if "LD_LIBRARY_PATH" in environ:
+			print "True"
 
 	def get_oracle_configs(self):
 		global data
@@ -102,17 +102,17 @@ class Ambiente():
 
 if __name__ == "__main__":
 	Ambiente = Ambiente()
-	Banco = Banco()
+	
 	args = args()
 	if args.debug:
 		args.debug = True
 	if args.debug:
 		print "Extraindo argumentos do CMD %s" % get_time()
-	if args.command != "ora_configs" and args.command != "pyversion" and args.command != "home":
+	if args.command != "ora_configs" and args.command != "pyversion" and args.command != "home" and args.command != "sys":
 		Ambiente.set_environ(args.instance)
-		success = Banco.connect(ip = "localhost",user = args.user, password = args.password, instance = args.instance)
+		Banco = Banco(ip = "localhost",user = args.user, password = args.password, instance = args.instance)
 		if args.debug:
-			print success
+			print *Banco.errors
 			print "Conectado %s" % get_time()
 		if args.debug:
 			print "Rodando comando %s" % get_time()
@@ -135,4 +135,6 @@ if __name__ == "__main__":
 			print_json([f for f in ora_configs.keys()])
 		except AttributeError:
 			pass
+	elif args.command == "sys":
+		Ambiente.run_sys(args.value)
 

@@ -71,6 +71,7 @@ def makefiles():
                     conf.write("\n\n")
                 conf.write("\n#Oracle Parameters\n")
                 conf.write("UserParameter=pyOracle_version=/etc/zabbix/guardiao/bin/pyOracle -c pyversion\n")
+                conf.write("UserParameter=sys[*]=/etc/zabbix/guardiao/bin/pyOracle -c sys -v $1\n")
                 conf.write("UserParameter=pyOracle_configs[*]=/etc/zabbix/guardiao/bin/pyOracle -c ora_configs\n")
                 conf.write("UserParameter=pyOracle_home[*]=/etc/zabbix/guardiao/bin/pyOracle -s $1 -c home\n")
                 conf.write("UserParameter=pyOracle[*]=/etc/zabbix/guardiao/bin/pyOracle -u $1 -p $2 -s $3 -c $4\n")
