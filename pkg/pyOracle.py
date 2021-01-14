@@ -58,9 +58,8 @@ class Banco():
 
 	def run_command(self, command, value):
 		try:
-			output = choose_script(cursor = self.cursor, opc = command, value = value)
-			for word in output:
-				print word
+			output = choose_script(cursor = self.cursor, opc = command, value = value)[0]
+			print output
 		except AttributeError:
 			pass
 		
