@@ -12,7 +12,7 @@ def get_os_ver():
     for word in output.split():
         try:
             ver = float(word)
-        except ValueError!!!:
+        except ValueError:
             pass
     return ver
 
