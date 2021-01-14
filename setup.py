@@ -3,7 +3,8 @@
 from os import system
 from subprocess import Popen, PIPE
 
-global success, install
+global success, install, zabbix_installed
+zabbix_installed = system("cat /etc/zabbix/zabbix_agentd.conf")
 installs = {"epel_install": True, "pip_install": True, "cxOracle_install": True, "rpm_add": True, "zabbix_install": True, "zabbix_config": True}
 successs = True
 
@@ -54,10 +55,8 @@ def makefiles():
     def makeinstall():
         ## Escreve conf do zabbix
         try:
-            cmd = ["cat", "/etc/zabbix/zabbix_agentd.conf"]
-            exists = system("cat /etc/zabbix/zabbix_agentd.conf")
             with open("/etc/zabbix/zabbix_agentd.conf", "a") as conf:
-                if exists != 0:
+                if zabbix_installed != 0:
                     conf.write("LogFile=/var/log/zabbix/guardiao_agentd.log\n")
                     conf.write("DebugLevel=3\n")
                     conf.write("EnableRemoteCommands=1\n")
@@ -87,7 +86,8 @@ def move():
     system('mv pkg/Oracle_Scripts.py /etc/zabbix/bin/Oracle_Scripts.py')
 
 if __name__ == "__main__":
-    install_zabbix()
+    if zabbix_installed != 0:
+    	install_zabbix()
     makefiles()
     pyOracle_setup()
     move()
