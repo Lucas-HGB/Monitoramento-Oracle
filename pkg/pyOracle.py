@@ -4,7 +4,7 @@ from platform import system as arch
 from timeit import timeit
 from argparse import ArgumentParser
 from Oracle_Scripts import choose_script
-from os import system
+from os import system, environ
 from cx_Oracle import connect
 
 
@@ -74,8 +74,12 @@ class Ambiente():
 		return system(command)
 
 	def get_pyora_version(self):
-		version = 3.2
+		version = 4.0
 		return version
+
+	def set_environ(self, instance):
+		configs = get_oracle_configs()
+		environ["LD_LIBRARY_PATH"] = "%s/lib" % (configs[instance])
 
 	def get_oracle_configs(self):
 		global data
@@ -106,6 +110,7 @@ if __name__ == "__main__":
 	if args.debug:
 		print "Extraindo argumentos do CMD %s" % get_time()
 	if args.command != "ora_configs" and args.command != "pyversion" and args.command != "home":
+		Ambiente.set_environ(args.instance)
 		Banco.connect(ip = "localhost",user = args.user, password = args.password, instance = args.instance)
 		if args.debug:
 			print "Conectado %s" % get_time()
