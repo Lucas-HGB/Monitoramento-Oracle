@@ -30,6 +30,11 @@ def args():
     args = parser.parse_args()
     return args
 
+global args
+args = args()
+if args.debug:
+	args.debug = True
+
 def print_json(values):
 	print "{"
 	print '    "data": ['
@@ -46,20 +51,29 @@ def print_json(values):
 class Banco():
 
 	def __init__(self, ip, user, password, instance, port = 1521):
+		self.errors = {}
 		from cx_Oracle import connect
-		self.errors = []
 		try:
 			self.connection = connect(user, password, "%s:%s/%s" % (ip, port, instance), encoding="UTF-8")
 			self.cursor = self.connection.cursor()
+			if args.debug:
+				print Banco.errors
+				print "Conectado %s" % get_time()
 		except Exception as excp:
-			self.errors.append(excp)
+			self.errors["connection"] = excp
+			if args.debug:
+				print Banco.errors
 
 	def run_command(self, command, value):
 		try:
+			if args.debug:
+				print "Rodando comando %s" % get_time()
 			output = choose_script(cursor = self.cursor, opc = command, value = value)[0]
 			print output
+			if args.debug:
+				print "Comando finalizado %s" % get_time()	
 		except Exception as excp:
-			self.erros.append(excp)
+			self.errors["run_command"] = excp
 		
 
 class Ambiente():
@@ -75,10 +89,10 @@ class Ambiente():
 		return version
 
 	def set_environ(self, instance):
-		configs = get_oracle_configs()
-		environ["LD_LIBRARY_PATH"] = "%s/lib" % (configs[instance])
-		if "LD_LIBRARY_PATH" in environ:
-			print "True"
+		get_oracle_configs()
+		environ["LD_LIBRARY_PATH"] = "%s/lib" % (self.configs[instance])
+		if args.debug:
+			print "LD_LIBRARY_PATH:  %s" % (environ["LD_LIBRARY_PATH"])
 
 	def get_oracle_configs(self):
 		global data
@@ -86,10 +100,13 @@ class Ambiente():
 		if arch().lower() == "linux":
 			try:
 				with open(r"/etc/oratab", "r") as oratab:
+					if args.debug:
+							print "Reading /etc/oratab"
 					lines = oratab.readlines()
 					config_lines = [line for line in lines if line[0] != "#" and line != "\n"]
 					for config in config_lines:
 						configs[config.split(":")[0]] = (config.split(":")[1])
+				self.configs = configs
 				return configs
 			except Exception as excp:
 				print excp
@@ -102,26 +119,13 @@ class Ambiente():
 
 if __name__ == "__main__":
 	Ambiente = Ambiente()
-	
-	args = args()
-	if args.debug:
-		args.debug = True
-	if args.debug:
-		print "Extraindo argumentos do CMD %s" % get_time()
 	if args.command != "ora_configs" and args.command != "pyversion" and args.command != "home" and args.command != "sys":
 		Ambiente.set_environ(args.instance)
 		Banco = Banco(ip = "localhost",user = args.user, password = args.password, instance = args.instance)
-		if args.debug:
-			print *Banco.errors
-			print "Conectado %s" % get_time()
-		if args.debug:
-			print "Rodando comando %s" % get_time()
 		if args.value:
 			Banco.run_command(command = args.command, value = args.value)
 		elif not args.value:
 			Banco.run_command(command = args.command, value = None)
-		if args.debug:
-			print "Comando finalizado %s" % get_time()		
 	elif args.command == "home":
 		if args.debug:
 			print "Extraindo home de SID específica %s" % get_time()
