@@ -70,7 +70,7 @@ def makefiles():
                     conf.write("RefreshActiteChecks=120\n")
                     conf.write("UnsafeUserParameters=1\n")
                     conf.write("\n\n")
-                conf.write("#Oracle Parameters\n")
+                conf.write("\n#Oracle Parameters\n")
                 conf.write("UserParameter=pyOracle_version=/etc/zabbix/guardiao/bin/pyOracle -c pyversion\n")
                 conf.write("UserParameter=pyOracle_configs[*]=/etc/zabbix/guardiao/bin/pyOracle -c ora_configs\n")
                 conf.write("UserParameter=pyOracle_home[*]=/etc/zabbix/guardiao/bin/pyOracle -s $1 -c home\n")
