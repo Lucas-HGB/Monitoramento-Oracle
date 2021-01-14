@@ -91,6 +91,7 @@ if __name__ == "__main__":
     makefiles()
     pyOracle_setup()
     move()
+    print "\n\n\n"
     for key, value in zip(installs.keys(), installs.values()):
         print key + " " + str(value)
             
