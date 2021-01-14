@@ -54,7 +54,7 @@ class Banco():
 				self.connection = connect(user, password, "%s:%s/%s" % (ip, port, instance), encoding="UTF-8")
 				self.cursor = self.connection.cursor()
 			except Exception as excp:
-				print excp
+				return excp
 
 	def run_command(self, command, value):
 		try:
@@ -111,8 +111,9 @@ if __name__ == "__main__":
 		print "Extraindo argumentos do CMD %s" % get_time()
 	if args.command != "ora_configs" and args.command != "pyversion" and args.command != "home":
 		Ambiente.set_environ(args.instance)
-		Banco.connect(ip = "localhost",user = args.user, password = args.password, instance = args.instance)
+		success = Banco.connect(ip = "localhost",user = args.user, password = args.password, instance = args.instance)
 		if args.debug:
+			print success
 			print "Conectado %s" % get_time()
 		if args.debug:
 			print "Rodando comando %s" % get_time()
@@ -126,7 +127,7 @@ if __name__ == "__main__":
 		if args.debug:
 			print "Extraindo home de SID específica %s" % get_time()
 		ora_configs = Ambiente.get_oracle_configs()
-		print(ora_configs[args["-s"]])
+		print(ora_configs[args.instance])
 	elif args.command == "pyversion":
 		print "pyOracle Version %s" % Ambiente.get_pyora_version()
 	elif args.command == "ora_configs":
@@ -135,3 +136,4 @@ if __name__ == "__main__":
 			print_json([f for f in ora_configs.keys()])
 		except AttributeError:
 			pass
+
