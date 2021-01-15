@@ -23,18 +23,15 @@ def pyOracle_setup():
     if ver >= 7:
         success = system("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
         system("python get-pip.py")
+        success = system("python -m pip install --upgrade pip cx_Oracle==7.3")
+        if success != 0:
+            installs["cxOracle_install"] = False
     elif ver < 7:
         pass
     if success != 0:
-        installs["epel_install"] = False
-        print "ERROR!!! when running 'sudo yum install -y oracle-epel-release-e17.x86_64"
-    if success != 0:
         print "ERROR!!! when running 'sudo yum install -y python-pip'"
-        install["pip_install"] = False
-    success = True
-    success = system("python -m pip install --upgrade pip cx_Oracle==7.3")
-    if success != 0:
-        installs["cxOracle_install"] = False
+        installs["pip_install"] = False
+
 
 def install_zabbix():
     ver = get_os_ver()

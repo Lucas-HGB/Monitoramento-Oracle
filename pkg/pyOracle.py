@@ -13,7 +13,7 @@ start = timeit()
 def get_time():
 	return abs(timeit() - start)
 
-def args():
+def get_args():
     parser = ArgumentParser()
     parser.add_argument("-u", "--user", dest="user",
                         help="Banco user", metavar="user")
@@ -31,7 +31,7 @@ def args():
     return args
 
 global args
-args = args()
+args = get_args()
 if args.debug:
 	args.debug = True
 
@@ -51,29 +51,32 @@ def print_json(values):
 class Banco():
 
 	def __init__(self, ip, user, password, instance, port = 1521):
-		self.errors = {}
 		from cx_Oracle import connect
 		try:
 			self.connection = connect(user, password, "%s:%s/%s" % (ip, port, instance), encoding="UTF-8")
 			self.cursor = self.connection.cursor()
 			if args.debug:
-				print Banco.errors
 				print "Conectado %s" % get_time()
 		except Exception as excp:
-			self.errors["connection"] = excp
 			if args.debug:
-				print Banco.errors
+				print excp
+			else:
+				pass
 
 	def run_command(self, command, value):
 		try:
 			if args.debug:
 				print "Rodando comando %s" % get_time()
 			output = choose_script(cursor = self.cursor, opc = command, value = value)[0]
-			print output
+			for word in output:
+				print output
 			if args.debug:
 				print "Comando finalizado %s" % get_time()	
 		except Exception as excp:
-			self.errors["run_command"] = excp
+			if args.debug:
+				print excp
+			else:
+				pass
 		
 
 class Ambiente():
@@ -89,7 +92,7 @@ class Ambiente():
 		return version
 
 	def set_environ(self, instance):
-		get_oracle_configs()
+		self.get_oracle_configs()
 		environ["LD_LIBRARY_PATH"] = "%s/lib" % (self.configs[instance])
 		if args.debug:
 			print "LD_LIBRARY_PATH:  %s" % (environ["LD_LIBRARY_PATH"])
@@ -100,8 +103,6 @@ class Ambiente():
 		if arch().lower() == "linux":
 			try:
 				with open(r"/etc/oratab", "r") as oratab:
-					if args.debug:
-							print "Reading /etc/oratab"
 					lines = oratab.readlines()
 					config_lines = [line for line in lines if line[0] != "#" and line != "\n"]
 					for config in config_lines:
