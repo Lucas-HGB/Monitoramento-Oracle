@@ -7,7 +7,7 @@ global success, install, zabbix_installed
 zabbix_installed = system("cat /etc/zabbix/zabbix_agentd.conf")
 installs = {"epel_install": True, "pip_install": True, "cxOracle_install": True, "rpm_add": True, "zabbix_install": True, "zabbix_config": True}
 successs = True
-
+log = open("errors.log", "a")
 def get_os_ver():
     cmd = ["cat", "/etc/redhat-release"]
     output = Popen(cmd, stdout=PIPE).communicate()[0]
@@ -18,32 +18,52 @@ def get_os_ver():
             pass
     return ver
 
+
+def check_python_ver():
+    cmd = ["/usr/bin/python", "-V"]
+    system("python -V")
+    ver = input("Please insert python version:")
+    if ver < 2.7:
+        system("yum install -y gcc openssl-devel bzip2-devel")
+        system("wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz")
+        system("tar xzf Python-2.7.18.tgz")
+        system("./Python-2.7.18/configure --enable-optimizations")
+        system("make altinstall")
+    else:
+        pass
+    output = Popen(cmd, stdout=PIPE).communicate()[0]
+    return output
+    
+    
 def pyOracle_setup():
     ver = get_os_ver()
-    if ver >= 7:
-        success = system("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
-        system("python get-pip.py")
-        success = system("python -m pip install --upgrade pip cx_Oracle==7.3")
-        if success != 0:
-            installs["cxOracle_install"] = False
-    elif ver < 7:
-        pass
+    pyver = check_python_ver()
+    success = system("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
+    if success == 0:
+        success = system("python get-pip.py")
     if success != 0:
-        print "ERROR!!! when running 'sudo yum install -y python-pip'"
+        log.write("ERROR!!! when installing pip")
         installs["pip_install"] = False
-
+    success = True
+    if success == 0:
+        if pyver >= 7:
+            success = system("python -m pip install --upgrade wheel setuptools pip cx_Oracle==7.3")
+        elif pyver < 7:
+            success = system("python2.7 -m pip install --upgrade wheel setuptools pip cx_Oracle==7.3")
+    if success != 0:
+        installs["cxOracle_install"] = False
 
 def install_zabbix():
     ver = get_os_ver()
     success = system("rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/%s/x86_64/zabbix-release-4.4-1.el%s.noarch.rpm" % (str(ver)[0], str(ver)[0]))
     if success != 0:
         installs["rpm_add"] = False
-        print "ERROR!!! when installing zabbix RPM"
+        log.write("ERROR!!! when installing zabbix RPM")
     success = system("sudo yum install -y zabbix-agent-4.4.6 zabbix-get-4.4.6 zabbix-sender-4.4.6")
     system("rm -rf /etc/zabbix")
     if success != 0:
-        print "ERROR!!! when installing zabbix pkg"
-	installs["zabbix_install"] = False
+        log.write("ERROR!!! when installing zabbix pkg")
+    installs["zabbix_install"] = False
 
 
 def makefiles():
@@ -88,6 +108,7 @@ def move():
     system('mv pkg/Oracle_Scripts.py /etc/zabbix/bin/Oracle_Scripts.py')
 
 if __name__ == "__main__":
+    check_python_ver()
     if zabbix_installed != 0:
     	install_zabbix()
     makefiles()
