@@ -31,8 +31,7 @@ def check_python_ver():
         system("make altinstall")
     else:
         pass
-    output = Popen(cmd, stdout=PIPE).communicate()[0]
-    return output
+    return ver[2]
     
     
 def pyOracle_setup():
@@ -40,7 +39,10 @@ def pyOracle_setup():
     pyver = check_python_ver()
     success = system("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
     if success == 0:
-        success = system("python get-pip.py")
+        if pyver >= 7:
+            success = system("python get-pip.py")
+        elif pyver < 7:
+            success = system("python2.7 get-pip.py")
     if success != 0:
         log.write("ERROR!!! when installing pip")
         installs["pip_install"] = False
