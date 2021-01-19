@@ -31,7 +31,7 @@ def check_python_ver():
         system("make altinstall")
     else:
         pass
-    return str(ver[2])
+    return str(ver)[2]
     
     
 def pyOracle_setup():
