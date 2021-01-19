@@ -5,7 +5,7 @@ from subprocess import Popen, PIPE
 
 global success, install, zabbix_installed
 zabbix_installed = system("cat /etc/zabbix/zabbix_agentd.conf")
-installs = {"epel_install": True, "pip_install": True, "cxOracle_install": True, "rpm_add": True, "zabbix_install": True, "zabbix_config": True}
+installs = {"pip_install": True, "cxOracle_install": True, "rpm_add": True, "zabbix_install": True, "zabbix_config": True}
 successs = True
 log = open("errors.log", "a")
 def get_os_ver():
