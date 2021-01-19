@@ -5,9 +5,10 @@ from subprocess import Popen, PIPE
 
 global success, install, zabbix_installed
 zabbix_installed = system("cat /etc/zabbix/zabbix_agentd.conf")
-installs = {"pip_install": True, "cxOracle_install": True, "rpm_add": True, "zabbix_install": True, "zabbix_config": True}
+installs = {"rpm_add": True, "zabbix_install": True, "zabbix_config": True}
 successs = True
 log = open("errors.log", "a")
+
 def get_os_ver():
     cmd = ["cat", "/etc/redhat-release"]
     output = Popen(cmd, stdout=PIPE).communicate()[0]
@@ -17,44 +18,7 @@ def get_os_ver():
         except ValueError:
             pass
     return ver
-
-
-def check_python_ver():
-    cmd = ["/usr/bin/python", "-V"]
-    system("python -V")
-    ver = input("Please insert python version:")
-    if ver < 2.7:
-        system("yum install -y gcc openssl-devel bzip2-devel")
-        system("wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz")
-        system("tar xzf Python-2.7.18.tgz")
-        system("./Python-2.7.18/configure --enable-optimizations")
-        system("make altinstall")
-    else:
-        pass
-    return str(ver)[2]
     
-    
-def pyOracle_setup():
-    ver = get_os_ver()
-    pyver = check_python_ver()
-    success = system("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
-    if success == 0:
-        if pyver >= 7:
-            success = system("python get-pip.py")
-        elif pyver < 7:
-            success = system("python2.7 get-pip.py")
-    if success != 0:
-        log.write("ERROR!!! when installing pip")
-        installs["pip_install"] = False
-    success = True
-    if success == 0:
-        installs["version": pyver]
-        if pyver >= 7:
-            success = system("python -m pip install --upgrade wheel setuptools pip cx_Oracle==7.3")
-        elif pyver < 7:
-            success = system("python2.7 -m pip install --upgrade wheel setuptools pip cx_Oracle==7.3")
-    if success != 0:
-        installs["cxOracle_install"] = False
 
 def install_zabbix():
     ver = get_os_ver()
@@ -114,7 +78,7 @@ if __name__ == "__main__":
     if zabbix_installed != 0:
     	install_zabbix()
     makefiles()
-    pyOracle_setup()
+    system("python ./setup2.py")
     move()
     print "\n\n\n"
     for key, value in zip(installs.keys(), installs.values()):
