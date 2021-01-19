@@ -93,7 +93,7 @@ class Ambiente():
 
 	def set_environ(self, instance):
 		self.get_oracle_configs()
-		environ["LD_LIBRARY_PATH"] = "%s/lib:/lib:/usr/lib" % (self.configs[instance])
+		environ["LD_LIBRARY_PATH"] = "%s/lib" % (self.configs[instance])
 		if args.debug:
 			print "LD_LIBRARY_PATH:  %s" % (environ["LD_LIBRARY_PATH"])
 

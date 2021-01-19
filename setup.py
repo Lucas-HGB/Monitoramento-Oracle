@@ -121,6 +121,6 @@ if __name__ == "__main__":
     for key, value in zip(installs.keys(), installs.values()):
         print key + " " + str(value)
     if need_setup:
-        print "Please run 'python2.7 get-pip.py' &
+        print "Please run 'python2.7 get-pip.py' &"
         print "'python2.7 -m pip install --upgrade pip wheel setuptools cx_Oracle==7.3' after install"
             
