@@ -22,7 +22,8 @@ def get_os_ver():
 def check_python_ver():
     cmd = ["/usr/bin/python", "-V"]
     system("python -V")
-    ver = input("Please insert python version:")
+    ver = raw_input("Please insert python version:")+
+    ver = float(str(ver)[0:3])
     if ver < 2.7:
         system("yum install -y gcc openssl-devel bzip2-devel")
         system("wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz")
@@ -36,7 +37,7 @@ def check_python_ver():
 
 def pyOracle_setup():
     pyver = check_python_ver()
-    installs["version": pyver]
+    installs["version"] = pyver
     system("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
     if pyver >= 2.7:
         success = system("python get-pip.py")
@@ -107,8 +108,8 @@ def move():
 if __name__ == "__main__":
     if zabbix_installed != 0:
     	install_zabbix()
+    pyOracle_setup()
     makefiles()
-    system("python ./setup2.py")
     move()
     print "\n\n\n"
     for key, value in zip(installs.keys(), installs.values()):
