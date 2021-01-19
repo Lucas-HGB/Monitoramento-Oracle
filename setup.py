@@ -19,6 +19,36 @@ def get_os_ver():
             pass
     return ver
     
+def check_python_ver():
+    cmd = ["/usr/bin/python", "-V"]
+    system("python -V")
+    ver = input("Please insert python version:")
+    if ver < 2.7:
+        system("yum install -y gcc openssl-devel bzip2-devel")
+        system("wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz")
+        system("tar xzf Python-2.7.18.tgz")
+        system("./Python-2.7.18/configure --enable-optimizations")
+        system("make altinstall")
+    else:
+        pass
+    return ver
+
+
+def pyOracle_setup():
+    pyver = check_python_ver()
+    installs["version": pyver]
+    system("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
+    if pyver >= 2.7:
+        success = system("python get-pip.py")
+    elif pyver < 2.7:
+        success = system("bash ./cx_Oracle.sh")
+    if success != 0:
+        log.write("ERROR!!! when installing pip")
+        installs["pip_install"] = False
+    elif success == 0 and pyver >= 2.7:
+        success = system("python -m pip install --upgrade wheel setuptools pip cx_Oracle==7.3")
+    if success != 0:
+        installs["cxOracle_install"] = False
 
 def install_zabbix():
     ver = get_os_ver()
