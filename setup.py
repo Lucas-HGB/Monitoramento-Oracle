@@ -8,7 +8,6 @@ need_setup = False
 zabbix_installed = system("cat /etc/zabbix/zabbix_agentd.conf")
 installs = {"rpm_add": True, "zabbix_install": True, "zabbix_config": True}
 successs = True
-log = open("errors.log", "a")
 
 def get_os_ver():
     cmd = ["cat", "/etc/redhat-release"]
@@ -43,8 +42,8 @@ def pyOracle_setup():
         success = system("python get-pip.py")
     elif pyver < 2.7:
         need_setup = True
+        success = False
     if success != 0:
-        log.write("ERROR!!! when installing pip")
         installs["pip_install"] = False
     elif success == 0 and pyver >= 2.7:
         success = system("python -m pip install --upgrade wheel setuptools pip cx_Oracle==7.3")
@@ -56,12 +55,10 @@ def install_zabbix():
     success = system("rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/%s/x86_64/zabbix-release-4.4-1.el%s.noarch.rpm" % (str(ver)[0], str(ver)[0]))
     if success != 0:
         installs["rpm_add"] = False
-        log.write("ERROR!!! when installing zabbix RPM")
     success = system("sudo yum install -y zabbix-agent-4.4.6 zabbix-get-4.4.6 zabbix-sender-4.4.6")
     system("rm -rf /etc/zabbix")
     if success != 0:
-        log.write("ERROR!!! when installing zabbix pkg")
-    installs["zabbix_install"] = False
+        installs["zabbix_install"] = False
 
 
 def makefiles():
