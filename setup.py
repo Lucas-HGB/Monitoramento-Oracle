@@ -3,7 +3,8 @@
 from os import system
 from subprocess import Popen, PIPE
 
-global success, install, zabbix_installed
+global success, install, zabbix_installed, need_setup
+need_setup = False
 zabbix_installed = system("cat /etc/zabbix/zabbix_agentd.conf")
 installs = {"rpm_add": True, "zabbix_install": True, "zabbix_config": True}
 successs = True
@@ -20,9 +21,8 @@ def get_os_ver():
     return ver
     
 def check_python_ver():
-    cmd = ["/usr/bin/python", "-V"]
     system("python -V")
-    ver = raw_input("Please insert python version:")+
+    ver = raw_input("Please insert python version:")
     ver = float(str(ver)[0:3])
     if ver < 2.7:
         system("yum install -y gcc openssl-devel bzip2-devel")
@@ -42,7 +42,7 @@ def pyOracle_setup():
     if pyver >= 2.7:
         success = system("python get-pip.py")
     elif pyver < 2.7:
-        success = system("bash ./cx_Oracle.sh")
+        need_setup = True
     if success != 0:
         log.write("ERROR!!! when installing pip")
         installs["pip_install"] = False
@@ -114,4 +114,6 @@ if __name__ == "__main__":
     print "\n\n\n"
     for key, value in zip(installs.keys(), installs.values()):
         print key + " " + str(value)
+    if need_setup:
+        print "Please run 'python2.7 get-pip.py' & \n'python2.7 -m pip install --upgrade pip wheel setuptools cx_Oracle==7.3' after install"
             
