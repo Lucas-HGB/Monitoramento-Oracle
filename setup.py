@@ -32,16 +32,16 @@ def check_python_ver():
     else:
         pass
     return ver
-
-
+global pyver
+pyver = check_python_ver()
+if pyver < 2.7:
+    need_setup = True
 def pyOracle_setup():
-    pyver = check_python_ver()
     installs["version"] = pyver
     system("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
     if pyver >= 2.7:
         success = system("python get-pip.py")
     elif pyver < 2.7:
-        need_setup = True
         success = False
     if success != 0:
         installs["pip_install"] = False
@@ -85,13 +85,22 @@ def makefiles():
                     conf.write("RefreshActiteChecks=120\n")
                     conf.write("UnsafeUserParameters=1\n")
                     conf.write("\n\n")
-                conf.write("\n#Oracle Parameters\n")
-                conf.write("UserParameter=pyOracle_version=/etc/zabbix/guardiao/bin/pyOracle -c pyversion\n")
-                conf.write("UserParameter=sys[*]=/etc/zabbix/guardiao/bin/pyOracle -c sys -v $1\n")
-                conf.write("UserParameter=pyOracle_configs[*]=/etc/zabbix/guardiao/bin/pyOracle -c ora_configs\n")
-                conf.write("UserParameter=pyOracle_home[*]=/etc/zabbix/guardiao/bin/pyOracle -s $1 -c home\n")
-                conf.write("UserParameter=pyOracle[*]=/etc/zabbix/guardiao/bin/pyOracle -u $1 -p $2 -s $3 -c $4\n")
-                conf.write("UserParameter=pyOracle_performance[*]=/etc/zabbix/guardiao/bin/pyOracle -u $1 -p $2 -s $3 -c performance -v $4\n")
+                if pyver >= 2.7:
+                    conf.write("\n#Oracle Parameters\n")
+                    conf.write("UserParameter=pyOracle_version=python /etc/zabbix/guardiao/bin/pyOracle -c pyversion\n")
+                    conf.write("UserParameter=sys[*]=python /etc/zabbix/guardiao/bin/pyOracle -c sys -v $1\n")
+                    conf.write("UserParameter=pyOracle_configs[*]=python /etc/zabbix/guardiao/bin/pyOracle -c ora_configs\n")
+                    conf.write("UserParameter=pyOracle_home[*]=python /etc/zabbix/guardiao/bin/pyOracle -i $1 -c home\n")
+                    conf.write("UserParameter=pyOracle[*]=python /etc/zabbix/guardiao/bin/pyOracle -u $1 -p $2 -i $3 -c $4\n")
+                    conf.write("UserParameter=pyOracle_performance[*]=python /etc/zabbix/guardiao/bin/pyOracle -u $1 -p $2 -i $3 -c performance -v $4\n")
+                elif pyver < 2.7:
+                    conf.write("\n#Oracle Parameters\n")
+                    conf.write("UserParameter=pyOracle_version=python2.7 /etc/zabbix/guardiao/bin/pyOracle -c pyversion\n")
+                    conf.write("UserParameter=sys[*]=python2.7 /etc/zabbix/guardiao/bin/pyOracle -c sys -v $1\n")
+                    conf.write("UserParameter=pyOracle_configs[*]=python2.7 /etc/zabbix/guardiao/bin/pyOracle -c ora_configs\n")
+                    conf.write("UserParameter=pyOracle_home[*]=python2.7 /etc/zabbix/guardiao/bin/pyOracle -i $1 -c home\n")
+                    conf.write("UserParameter=pyOracle[*]=python2.7 /etc/zabbix/guardiao/bin/pyOracle -u $1 -p $2 -i $3 -c $4\n")
+                    conf.write("UserParameter=pyOracle_performance[*]=python2.7 /etc/zabbix/guardiao/bin/pyOracle -u $1 -p $2 -i $3 -c performance -v $4\n")
                 conf.write("Timeout=10")
         except:
             installs["zabbix_config"] = False
@@ -112,5 +121,6 @@ if __name__ == "__main__":
     for key, value in zip(installs.keys(), installs.values()):
         print key + " " + str(value)
     if need_setup:
-        print "Please run 'python2.7 get-pip.py' & \n'python2.7 -m pip install --upgrade pip wheel setuptools cx_Oracle==7.3' after install"
+        print "Please run 'python2.7 get-pip.py' &
+        print "'python2.7 -m pip install --upgrade pip wheel setuptools cx_Oracle==7.3' after install"
             
