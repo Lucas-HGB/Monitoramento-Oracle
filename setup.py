@@ -48,6 +48,7 @@ def pyOracle_setup():
         installs["pip_install"] = False
     success = True
     if success == 0:
+        installs["version": pyver]
         if pyver >= 7:
             success = system("python -m pip install --upgrade wheel setuptools pip cx_Oracle==7.3")
         elif pyver < 7:
