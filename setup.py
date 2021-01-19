@@ -111,7 +111,6 @@ def move():
     system('mv pkg/Oracle_Scripts.py /etc/zabbix/bin/Oracle_Scripts.py')
 
 if __name__ == "__main__":
-    check_python_ver()
     if zabbix_installed != 0:
     	install_zabbix()
     makefiles()
