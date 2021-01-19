@@ -69,7 +69,7 @@ class Banco():
 				print "Rodando comando %s" % get_time()
 			output = choose_script(cursor = self.cursor, opc = command, value = value)[0]
 			for word in output:
-				print output
+				print word
 			if args.debug:
 				print "Comando finalizado %s" % get_time()	
 		except Exception as excp:
