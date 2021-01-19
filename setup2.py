@@ -12,7 +12,6 @@ def check_python_ver():
     
     
 def pyOracle_setup():
-    ver = get_os_ver()
     pyver = check_python_ver()
     success = system("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
     if success == 0:
