@@ -21,7 +21,7 @@ def get_os_ver():
     
 def check_python_ver():
     system("python -V")
-    ver = raw_input("Please insert python version:")
+    ver = raw_input("Please insert python version: ")
     ver = float(str(ver)[0:3])
     if ver < 2.7:
         system("yum install -y gcc openssl-devel bzip2-devel")
