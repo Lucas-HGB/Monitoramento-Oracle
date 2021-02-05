@@ -82,7 +82,7 @@ def makefiles():
                     conf.write("StartAgents=3\n")
                     conf.write("ServerActive=186.250.92.79:10051\n")
                     conf.write("Hostname=%s\n"%(raw_input("Hostname: ")))
-                    conf.write("RefreshActiteChecks=120\n")
+                    conf.write("RefreshActiveChecks=120\n")
                     conf.write("UnsafeUserParameters=1\n")
                     conf.write("\n\n")
                 if pyver >= 2.7:
